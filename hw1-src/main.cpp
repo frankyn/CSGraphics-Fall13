@@ -1,14 +1,15 @@
 #include <cmath>
+#include <unistd.h>
 #include "../include/Angel.h"
 
-const int NumPoints = 50;
+int NumPoints = 10;
 
 void init ( ) {
-
-	vec2 points[NumPoints];
-    int i;
+	int i;
     double rad = 0.0f;
     double r = 0.5f;
+    vec2 points[NumPoints];
+    
 
     for ( i = 0 ; i < NumPoints ; i++ ) {
         points[i] = vec2 ( r * cos ( rad ) , r * sin ( rad ) );
@@ -38,6 +39,7 @@ void init ( ) {
                            BUFFER_OFFSET(0) );
 
     glClearColor ( 1.0 , 1.0 , 1.0 , 1.0 ); // white background
+    //free ( points );
 }
 
 void display ( ) {
@@ -65,7 +67,20 @@ int main ( int argc , char ** argv ) {
 #ifndef __APPLE__
     glewInit ( );
 #endif
-    
+    int nTemp, c;
+
+    while ((c = getopt (argc, argv, "n:")) != -1) {
+        switch ( c ) {
+            case 'n':
+            {
+                nTemp = atoi(optarg);
+                if ( nTemp > 0 ) {
+                    NumPoints = nTemp;
+                }
+            }
+            break;
+        }
+    }
     init ( );
 
     glutDisplayFunc ( display );
