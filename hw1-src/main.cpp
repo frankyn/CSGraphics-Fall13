@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdlib>
 #include <unistd.h>
 #include "../include/Angel.h"
 
@@ -8,7 +9,9 @@ void init ( ) {
 	int i;
     double rad = 0.0f;
     double r = 0.5f;
-    vec2 points[NumPoints];
+
+    printf ( "%d\n" , NumPoints );
+    vec2 * points = (vec2*)malloc(sizeof(vec2)*NumPoints);
     
 
     for ( i = 0 ; i < NumPoints ; i++ ) {
@@ -26,7 +29,7 @@ void init ( ) {
     GLuint buffer;
     glGenBuffers( 1, &buffer );
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(vec2)*NumPoints, points, GL_STATIC_DRAW );
 
     // Load shaders and use the resulting shader program
     GLuint program = InitShader( "vshader.glsl" , "fshader.glsl" );
@@ -39,7 +42,7 @@ void init ( ) {
                            BUFFER_OFFSET(0) );
 
     glClearColor ( 1.0 , 1.0 , 1.0 , 1.0 ); // white background
-    //free ( points );
+    free ( points );
 }
 
 void display ( ) {
