@@ -22,13 +22,12 @@ CXXINCS = -Iinclude
 CXXFLAGS = $(CXXDEFS) $(CXXINCS)
 
 LDOPTS =
-
-
 ifeq ($(UNAME_S),Darwin)
 	LDLIBS = -framework OpenGL -framework GLUT
 else
 	LDLIBS = -lGLEW -lglut -lGL -lX11 -lm
 endif
+
 LDFLAGS = $(LDOPTS) $(LDDIRS) $(LDLIBS)
 
 DIRT = $(wildcard *.o *.i *~ */*~ *.log)

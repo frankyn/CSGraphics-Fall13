@@ -1,43 +1,48 @@
+#include <cmath>
 #include "../include/Angel.h"
 
+const int NumPoints = 50;
+
 void init ( ) {
-	/*vec2 points[NumPoints];
 
-    // Specifiy the vertices for a triangle
-    vec2 vertices[3] = {
-        vec2( -1.0, -1.0 ), vec2( 0.0, 1.0 ), vec2( 1.0, -1.0 )
-    };
+	vec2 points[NumPoints];
+    int i;
+    double rad = 0.0f;
+    double r = 0.5f;
 
-    // Select an arbitrary initial point inside of the triangle
-    points[0] = vec2( 0.25, 0.50 );
+    for ( i = 0 ; i < NumPoints ; ++i ) {
 
-    // compute and store N-1 new points
-    for ( int i = 1; i < NumPoints ; ++i ) {
-        int j = rand() % 3;   // pick a vertex at random
-
-        // Compute the point halfway between the selected vertex
-        //   and the previous point
-        points[i] = ( points[i - 1] + vertices[j] ) / 2.0;
+        points[i] = vec2 ( r * cos ( rad ) , r * sin ( rad ) );
+        rad += 6.28f / NumPoints;
     }
-	*/
-    /*
-	APPLE
-    */
-    // Create a vertex array object
-    //GLuint vao[1];
-    //glGenVertexArraysAPPLE( 1 , vao );
-    //glBindVertexArrayAPPLE( vao[0] );
 
-    /*
-	Everything else
-     */
+    // Create a vertex array object
+    GLuint vao[1];
+    _glGenVertexArrays ( 1 , vao );
+    _glBindVertexArray ( vao[0] );
     
+    // Create and initialize a buffer object
+    GLuint buffer;
+    glGenBuffers( 1, &buffer );
+    glBindBuffer( GL_ARRAY_BUFFER, buffer );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
+
+    // Load shaders and use the resulting shader program
+    GLuint program = InitShader( "vshader.glsl" , "fshader.glsl" );
+    glUseProgram( program );
+
+    // Initialize the vertex position attribute from the vertex shader
+    GLuint loc = glGetAttribLocation( program , "vPosition" );
+    glEnableVertexAttribArray( loc );
+    glVertexAttribPointer( loc, 2, GL_FLOAT, GL_FALSE, 0,
+                           BUFFER_OFFSET(0) );
+
     glClearColor ( 1.0 , 1.0 , 1.0 , 1.0 ); // white background
 }
 
 void display ( ) {
     glClear ( GL_COLOR_BUFFER_BIT );     // clear the window
-    //glDrawArrays ( GL_POINTS , 0 , NumPoints );    // draw the points
+    glDrawArrays ( GL_LINE_LOOP , 0 , NumPoints );    // draw the points
     glFlush ( );
 
 }
