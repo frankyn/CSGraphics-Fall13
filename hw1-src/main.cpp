@@ -10,7 +10,6 @@ void init ( ) {
     double rad = 0.0f;
     double r = 0.5f;
 
-    printf ( "%d\n" , NumPoints );
     vec2 * points = (vec2*)malloc(sizeof(vec2)*NumPoints);
     
 

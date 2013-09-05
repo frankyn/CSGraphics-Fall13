@@ -13,3 +13,5 @@
 *.a
 
 hw1-src/main
+
+.DS_Store
