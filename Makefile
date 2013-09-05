@@ -9,6 +9,8 @@ TARGETS = $(basename $(SOURCES))
 INIT_SHADER = common/InitShader.o
  
 CXX = g++ 
+
+UNAME := $(shell uname)
 ifeq ($(UNAME_S),Darwin)
 	CXXDEFS = -Wall -pedantic
 else
