@@ -10,17 +10,17 @@ void init ( ) {
     double rad = 0.0f;
     double r = 0.5f;
 
-    for ( i = 0 ; i < NumPoints ; ++i ) {
-
+    for ( i = 0 ; i < NumPoints ; i++ ) {
         points[i] = vec2 ( r * cos ( rad ) , r * sin ( rad ) );
         rad += 6.28f / NumPoints;
     }
 
+    
     // Create a vertex array object
     GLuint vao[1];
     _glGenVertexArrays ( 1 , vao );
     _glBindVertexArray ( vao[0] );
-    
+
     // Create and initialize a buffer object
     GLuint buffer;
     glGenBuffers( 1, &buffer );
@@ -62,6 +62,10 @@ int main ( int argc , char ** argv ) {
 
     glutCreateWindow ( "Sierpinski Gasket" );
 
+#ifndef __APPLE__
+    glewInit ( );
+#endif
+    
     init ( );
 
     glutDisplayFunc ( display );
