@@ -1,0 +1,14 @@
+# How to compile.
+# Start from root directory
+make
+
+
+# How to run.
+cd hw1-src
+./main 
+
+# How to define the amount of vertexes.
+./main -n 10
+./main -n 30
+./main -n [number_of_vertexes]
+
