@@ -1,53 +1,81 @@
 #include <cmath>
-#include <cstdlib>
 #include <unistd.h>
 #include "../include/Angel.h"
 
-int NumPoints = 10;
+int NumberOfLines = 10;
+int ArraySize;
 
 void init ( ) {
-	int i;
-    double rad = 0.0f;
-    double r = 0.5f;
-
-    vec2 * points = (vec2*)malloc(sizeof(vec2)*NumPoints);
+    int i = 0;
+    float p, a, p2, a2;
+    float inc = 360.0f / NumberOfLines;
+    //SUPER DIRTY
+    for ( p = -180.0f ; p <= 180.0f ; p += inc ) {
+        for ( a = -180.0f; a <= 180.0f; a += inc ) {
+            i++;
+        }
+    }
     
+    ArraySize = i*2;
+    vec3 * sphere = new vec3 [ ArraySize ];  //  Need to points for the poles
+    
+    i = 0;
 
-    for ( i = 0 ; i < NumPoints ; i++ ) {
-        points[i] = vec2 ( r * cos ( rad ) , r * sin ( rad ) );
-        rad += 6.28f / NumPoints;
+    //Compute Latitude and Longitude lines.
+
+    for ( p = -180.0f ; p <= 180.0f ; p += inc ) {
+        p2 = p * DegreesToRadians;
+        for ( a = -180.0f; a <= 180.0f; a += inc ) {
+            a2 = a * DegreesToRadians;
+            sphere [ i++ ] = 0.5f * vec3 ( sin ( a2 ) * cos ( p2 ) ,
+                                           sin ( p2 ) ,
+                                           cos ( a2 ) * cos ( p2 ) );
+        }
+    }
+
+    for ( a = -180.0f ; a <= 180.0f ; a += inc )  {
+        a2 = a * DegreesToRadians;
+        for ( p = -180.0f; p <= 180.0f; p += inc ) {
+            p2 = p * DegreesToRadians;
+            sphere [ i++ ] =  0.5f * vec3 ( sin ( a2 ) * cos ( p2 ) ,
+                                            sin ( p2 ) ,
+                                            cos ( a2 ) * cos ( p2 ) );
+        }
     }
 
     
-    // Create a vertex array object
-    GLuint vao[1];
-    _glGenVertexArrays ( 1 , vao );
-    _glBindVertexArray ( vao[0] );
+    GLuint vao;
+    _glGenVertexArrays ( 1 , &vao );
+    _glBindVertexArray ( vao );
 
-    // Create and initialize a buffer object
     GLuint buffer;
-    glGenBuffers( 1, &buffer );
-    glBindBuffer( GL_ARRAY_BUFFER, buffer );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(vec2)*NumPoints, points, GL_STATIC_DRAW );
+    glGenBuffers ( 1 , &buffer );
+    glBindBuffer ( GL_ARRAY_BUFFER , buffer );
+    glBufferData ( GL_ARRAY_BUFFER , sizeof ( vec3 ) * ArraySize ,
+                  sphere , GL_STATIC_DRAW );
 
-    // Load shaders and use the resulting shader program
-    GLuint program = InitShader( "vshader.glsl" , "fshader.glsl" );
-    glUseProgram( program );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-    // Initialize the vertex position attribute from the vertex shader
-    GLuint loc = glGetAttribLocation( program , "vPosition" );
-    glEnableVertexAttribArray( loc );
-    glVertexAttribPointer( loc, 2, GL_FLOAT, GL_FALSE, 0,
-                           BUFFER_OFFSET(0) );
+    GLuint program = InitShader ( "vshader.glsl" , "fshader.glsl" );
 
-    glClearColor ( 1.0 , 1.0 , 1.0 , 1.0 ); // white background
-    free ( points );
+    glUseProgram ( program );
+
+    GLint location = glGetAttribLocation ( program , "vPosition" );
+    glEnableVertexAttribArray ( location );
+    glVertexAttribPointer ( location , 3 , GL_FLOAT , GL_FALSE ,
+                          0 , BUFFER_OFFSET ( 0 ) );
+
+    glEnable ( GL_DEPTH_TEST );
+
+    glClearColor ( 0.0f , 0.0f , 0.0f , 1.0f );
+    
+    delete sphere;
 }
 
 void display ( ) {
-    glClear ( GL_COLOR_BUFFER_BIT );     // clear the window
-    glDrawArrays ( GL_LINE_LOOP , 0 , NumPoints );    // draw the points
-    glFlush ( );
+     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );     // clear the window
+     glDrawArrays ( GL_LINE_LOOP , 0 , ArraySize  );
+     glFlush ( );
 
 }
 
@@ -61,10 +89,10 @@ void keyboard ( unsigned char key , int x , int y ) {
 
 int main ( int argc , char ** argv ) {
     glutInit ( &argc, argv );
-    glutInitDisplayMode ( GLUT_RGBA );
+    glutInitDisplayMode ( GLUT_RGBA | GLUT_DEPTH );
     glutInitWindowSize ( 512 , 512 );
 
-    glutCreateWindow ( "Sierpinski Gasket" );
+    glutCreateWindow ( "Sphere for Days" );
 
 #ifndef __APPLE__
     glewInit ( );
@@ -77,7 +105,7 @@ int main ( int argc , char ** argv ) {
             {
                 nTemp = atoi(optarg);
                 if ( nTemp > 0 ) {
-                    NumPoints = nTemp;
+                    NumberOfLines = nTemp;
                 }
             }
             break;
