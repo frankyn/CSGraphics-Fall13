@@ -2,12 +2,11 @@
 
 .NULL: .exe
 
-SOURCES = $(wildcard ./hw*-src/*.cpp)
-HEADERS = $(wildcard ./hw*-src/*.h)
+SOURCES = $(wildcard ./hw6-src/*.cpp)
+HEADERS = $(wildcard ./hw6-src/*.h)
 TARGETS = $(basename $(SOURCES))
 
 INIT_SHADER = common/InitShader.o
- 
 CXX = g++ 
 
 UNAME_S := $(shell uname -s)
@@ -17,7 +16,7 @@ else
 	CXXDEFS = -DFREEGLUT_STATIC -DGLEW_STATIC
 endif
 
-CXXINCS = -Iinclude  
+CXXINCS = -Iinclude
 
 CXXFLAGS = $(CXXDEFS) $(CXXINCS)
 
@@ -36,19 +35,12 @@ DIRT = $(wildcard *.o *.i *~ */*~ *.log)
 
 .PHONY: Makefile
 
-default all: $(TARGETS)
+default all: $(INIT_SHADER)
+	g++  -Wall -pedantic -Iinclude ./hw6-src/main.cpp common/InitShader.o   $(LDLIBS) -o hw6-src/hw6-src
+$(TARGETS): $(INIT_SHADER) 
 
-$(TARGETS): $(INIT_SHADER)
-
-%: %.cpp
-	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
-
-#-----------------------------------------------------------------------------
-
-%.i: %.cpp
-	$(CXX) -E $(CXXFLAGS) $< | uniq > $@
-
-#-----------------------------------------------------------------------------
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -c $@
 
 clean:
 	$(RM) $(DIRT)

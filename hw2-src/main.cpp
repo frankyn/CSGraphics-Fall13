@@ -15,7 +15,7 @@ void init ( ) {
             i++;
         }
     }
-    
+
     ArraySize = i*2;
     vec3 * sphere = new vec3 [ ArraySize ];  //  Need to points for the poles
     
@@ -74,7 +74,7 @@ void init ( ) {
 
 void display ( ) {
      glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );     // clear the window
-     glDrawArrays ( GL_LINE_LOOP , 0 , ArraySize  );
+     glDrawArrays ( GL_LINE_STRIP, 0 , ArraySize  );
      glFlush ( );
 
 }
