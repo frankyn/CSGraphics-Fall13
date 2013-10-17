@@ -5,7 +5,7 @@
 //   those colors across the triangles.  We us an orthographic projection
 //   as the default projetion.
 
-#include "Angel.h"
+#include "../include/Angel.h"
 #include <unistd.h>
 
 typedef Angel::vec4  color4;
@@ -56,7 +56,7 @@ enum { Xaxis = 0, Yaxis = 1, Zaxis = 2, NumAxes = 3 };
 int      Axis = Xaxis;
 GLfloat  Theta = 45.0f;
 GLfloat ThetaX = 36.86;
-GLfloat ThetaY = 18.43494882;
+GLfloat ThetaY = 18.43494;
 
 GLfloat  dx =  1.5f;
 GLfloat  dy =  3.5f;
@@ -118,11 +118,12 @@ void
 init()
 {
     colorcube();
-
+ 
     // Create a vertex array object
-    GLuint vao;
-    _glGenVertexArrays( 1, &vao );
-    _glBindVertexArray( vao );
+    GLuint vao[1];
+    _glGenVertexArrays ( 1 , vao );
+    _glBindVertexArray ( vao[0] );
+
 
     // Create and initialize a buffer object
     GLuint buffer;
@@ -148,8 +149,8 @@ init()
 			   BUFFER_OFFSET(sizeof(points)) );
     
     
-    glEnable( GL_DEPTH_TEST );
     glClearColor( 1.0, 1.0, 1.0, 1.0 ); 
+   
 }
 
 
@@ -214,6 +215,10 @@ main( int argc, char **argv )
     glutInitWindowSize( 512, 512 );
     glutInitWindowPosition(0,0);
     glutCreateWindow( "Color Cube" );
+
+#ifndef __APPLE__
+    glewInit ( );
+#endif
     char c;
     int temp;
     while ((c = getopt (argc, argv, "t:")) != -1) {
@@ -229,12 +234,12 @@ main( int argc, char **argv )
         }
     }
 
-    
 
     init();
-
+    
     glutDisplayFunc( display );
     glutKeyboardFunc( keyboard );
     glutMainLoop();
+    
     return 0;
 }
