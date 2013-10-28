@@ -10,188 +10,81 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <cerrno>
 
 typedef Angel::vec4  color4;
 typedef Angel::vec4  point4;
+typedef struct OBJFile{
+    char mtllib[100];
+    char mtl_ver[100];
+    long vertices_num;
+    long faces_num;
+    int ** faces;
+    point4 * vertices;
+} OBJFile; 
 
-const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
+void readObjFile ( const char * , OBJFile * );
+void renderObj ( OBJFile * , point4 ** );
 
-point4 points[NumVertices*2];
-color4 colors[NumVertices*2];
+OBJFile objFile;
+point4 * points;
 
-// Vertices of a unit cube centered at origin, sides aligned with axes
-point4 vertices_cube_1[8] = {
-    point4( 1.0, 3.0, 1.0, 1.0 ),
-    point4( 1.0, 4.0, 1.0, 1.0 ),
-    point4( 2.0, 4.0, 1.0, 1.0 ),
-    point4( 2.0, 3.0, 1.0, 1.0 ),
-    point4( 1.0, 3.0, 2.0, 1.0 ),
-    point4( 1.0, 4.0, 2.0, 1.0 ),
-    point4( 2.0, 4.0, 2.0, 1.0 ),
-    point4( 2.0, 3.0, 2.0, 1.0 )
-};
-
-point4 vertices_cube_2[8] = {
-    point4( 1.0, 3.0, 1.0, 1.0 ),
-    point4( 1.0, 4.0, 1.0, 1.0 ),
-    point4( 2.0, 4.0, 1.0, 1.0 ),
-    point4( 2.0, 3.0, 1.0, 1.0 ),
-    point4( 1.0, 3.0, 2.0, 1.0 ),
-    point4( 1.0, 4.0, 2.0, 1.0 ),
-    point4( 2.0, 4.0, 2.0, 1.0 ),
-    point4( 2.0, 3.0, 2.0, 1.0 )
-};
-
-// RGBA olors
-color4 vertex_colors[8] = {
-    color4( 0.0, 0.0, 0.0, 1.0 ),  // black
-    color4( 1.0, 0.0, 0.0, 1.0 ),  // red
-    color4( 1.0, 1.0, 0.0, 1.0 ),  // yellow
-    color4( 0.0, 1.0, 0.0, 1.0 ),  // green
-    color4( 0.0, 0.0, 1.0, 1.0 ),  // blue
-    color4( 1.0, 0.0, 1.0, 1.0 ),  // magenta
-    color4( 1.0, 1.0, 1.0, 1.0 ),  // white
-    color4( 0.0, 1.0, 1.0, 1.0 )   // cyan
-};
-
-// Array of rotation angles (in degrees) for each coordinate axis
-enum { Xaxis = 0, Yaxis = 1, Zaxis = 2, NumAxes = 3 };
-int      Axis = Xaxis;
-GLfloat  Theta = 45.0f;
-GLfloat ThetaX = 36.86;
-GLfloat ThetaY = 18.43494;
-
-GLfloat  dx =  1.5f;
-GLfloat  dy =  3.5f;
-GLfloat  dz =  1.5f;
-GLfloat fdx = -3.0f;
-
-//----------------------------------------------------------------------------
-
-// quad generates two triangles for each face and assigns colors
-//    to the vertices
-int Index = 0;
-void
-cube1( int a, int b, int c, int d )
-{
-    colors[Index] = vertex_colors[a]; points[Index] = vertices_cube_1[a]; Index++;
-    colors[Index] = vertex_colors[b]; points[Index] = vertices_cube_1[b]; Index++;
-    colors[Index] = vertex_colors[c]; points[Index] = vertices_cube_1[c]; Index++;
-    colors[Index] = vertex_colors[a]; points[Index] = vertices_cube_1[a]; Index++;
-    colors[Index] = vertex_colors[c]; points[Index] = vertices_cube_1[c]; Index++;
-    colors[Index] = vertex_colors[d]; points[Index] = vertices_cube_1[d]; Index++;
-}
-
-void
-cube2( int a, int b, int c, int d )
-{
-    colors[Index] = vertex_colors[a]; points[Index] = vertices_cube_2[a]; Index++;
-    colors[Index] = vertex_colors[b]; points[Index] = vertices_cube_2[b]; Index++;
-    colors[Index] = vertex_colors[c]; points[Index] = vertices_cube_2[c]; Index++;
-    colors[Index] = vertex_colors[a]; points[Index] = vertices_cube_2[a]; Index++;
-    colors[Index] = vertex_colors[c]; points[Index] = vertices_cube_2[c]; Index++;
-    colors[Index] = vertex_colors[d]; points[Index] = vertices_cube_2[d]; Index++;
-}
-
-//----------------------------------------------------------------------------
-
-// generate 12 triangles: 36 vertices and 36 colors
-void
-colorcube()
-{
-    cube1( 1, 0, 3, 2 );
-    cube1( 2, 3, 7, 6 );
-    cube1( 3, 0, 4, 7 );
-    cube1( 6, 5, 1, 2 );
-    cube1( 4, 5, 6, 7 );
-    cube1( 5, 4, 0, 1 );
-
+//OpenGL initialization
+void init ( ) {
+    //Points buffer
     
-    cube2( 1, 0, 3, 2 );
-    cube2( 2, 3, 7, 6 );
-    cube2( 3, 0, 4, 7 );
-    cube2( 6, 5, 1, 2 );
-    cube2( 4, 5, 6, 7 );
-    cube2( 5, 4, 0, 1 );
+    //Read in file "teapot.obj" and then render to points buffer
+    readObjFile ( "teapot.obj" , &objFile );
+    renderObj ( &objFile , &points );
 
-}
-
-// OpenGL initialization
-void
-init()
-{
-    colorcube();
- 
-    // Create a vertex array object
+    //Create a vertex array object
     GLuint vao[1];
     _glGenVertexArrays ( 1 , vao );
     _glBindVertexArray ( vao[0] );
 
 
-    // Create and initialize a buffer object
+    //Create and initialize a buffer object
     GLuint buffer;
     glGenBuffers( 1, &buffer );
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(points) + sizeof(colors), NULL, GL_STATIC_DRAW );
-    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(points), points );
-    glBufferSubData( GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors );
-
-    // Load shaders and use the resulting shader program
+    glBufferData( GL_ARRAY_BUFFER, 3*sizeof(point4)*objFile.faces_num, points, GL_STATIC_DRAW );
+    
+    //Load shaders and use the resulting shader program
     GLuint program = InitShader( "vshader.glsl", "fshader.glsl" );
     glUseProgram( program );
 
-    // set up vertex arrays
-    GLuint vPosition = glGetAttribLocation( program, "vPosition" );
-    glEnableVertexAttribArray( vPosition );
-    glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0,
-			   BUFFER_OFFSET(0) );
+    GLint location = glGetAttribLocation ( program , "vPosition" );
+    glEnableVertexAttribArray ( location );
+    glVertexAttribPointer ( location , 4 , GL_FLOAT , GL_FALSE ,
+                          0 , BUFFER_OFFSET ( 0 ) );
     
-    GLuint vColor = glGetAttribLocation( program, "vColor" ); 
-    glEnableVertexAttribArray( vColor );
-    glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0,
-			   BUFFER_OFFSET(sizeof(points)) );
-    
-    
-    glClearColor( 1.0, 1.0, 1.0, 1.0 ); 
-   
+    glEnable ( GL_DEPTH_TEST );
+
+    glClearColor( 0.0f , 0.0f , 0.0f , 1.0f ); 
+
 }
 
 
 
 //----------------------------------------------------------------------------
 
-void
-display( void )
+void display( )
 {
+    glPolygonMode( GL_FRONT_AND_BACK , GL_LINE ) ;
+    
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
-    mat4  transform = ( Translate( -dx, -dy, -dz ) *
-      RotateX( -ThetaX ) *
-      RotateY( -ThetaY ) *
-      RotateZ( Theta ) *
-      RotateY( ThetaY ) *
-      RotateX( ThetaX ) *
-      Translate( dx, dy, dz ) );
+    
+    mat4  transform = Scale( .50 , .50 , .50 );
+    point4 * transformed_points = (point4*)malloc(sizeof(point4) * 3 * objFile.faces_num );
 
-    transform = transform * Translate( -3 , 0 , 0 ) ;
-    point4  transformed_points[NumVertices];
-
-    for ( int i = 0; i < NumVertices; ++i ) {
-        transformed_points[i] = Scale( .15 , .15 , .15 )*transform*points[i];
+    for ( int i = 0; i < (3 * objFile.faces_num); ++i ) {
+        points[i] = transform*points[i];
     }
     
-    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(transformed_points),
-         transformed_points );
+    glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(point4) * 3 * objFile.faces_num, points );
 
-    for ( int i = 0; i < NumVertices; ++i ) {
-        transformed_points[i] = Scale( .15 , .15 , .15 )*points[i+NumVertices];
-    }
-
-    
-    glBufferSubData( GL_ARRAY_BUFFER, sizeof(transformed_points) , sizeof(transformed_points),
-         transformed_points );
-
-    glDrawArrays( GL_TRIANGLES, 0, NumVertices*2 );
+    glDrawArrays( GL_TRIANGLES, 0, objFile.faces_num * 3 * sizeof(point4) );
     
     glutSwapBuffers();
 
@@ -199,47 +92,118 @@ display( void )
 
 //----------------------------------------------------------------------------
 
-void
-keyboard( unsigned char key, int x, int y )
-{
+void keyboard( unsigned char key , int x , int y ) {
     switch( key ) {
-	case 033: // Escape Key
-	case 'q': case 'Q':
-	    exit( EXIT_SUCCESS );
-	    break;
+    	case 033: // Escape Key
+    	case 'q': 
+        case 'Q':
+    	    exit( EXIT_SUCCESS );
+    	break;
     }
 }
 
-struct Obj{
 
-};
-
-
-void readObjFile ( const char * filename ) {
+void readObjFile ( const char * filename , OBJFile * objFile ) {
+    //Counter
+    long i;
+    
+    //Open handle for filename
     FILE * fp = fopen ( filename , "r" );
+    
+    //Make sure it was opened correctly.
+    if ( !fp ) {
+        perror ( "fopen" );
+        return;
+    }
 
     char buffer[512];
-    long vertices = 0;
-    long fsss = 0;
+    
+    objFile->vertices_num = 1;
+    objFile->faces_num = 0;
+
+    //Count all vertices and faces
     while ( fgets ( buffer , sizeof(buffer) , fp ) ) {
         if ( strstr ( buffer , "v" ) ) {
-            vertices ++;
-        }
+            objFile->vertices_num ++;
+        } else
         if ( strstr ( buffer , "f" ) ) {
-            fsss ++;
+            objFile->faces_num ++;
         }
     }
 
-    printf ( "Vertices: %ld \n" , vertices );
-    printf ( "Fsss??: %ld \n" , fsss );
+    //Allocate memory for vertices and faces
+    //printf ( "Vertices: %ld \n" , objFile->vertices_num );
+    objFile->vertices = (point4*)malloc ( sizeof(point4) * objFile->vertices_num );
+    if ( !objFile->vertices ) {
+        perror ( "malloc" );
+        return;
+    }
+
+    //printf ( "Faces: %ld \n" , objFile->faces_num );
+    objFile->faces = (int**)malloc ( sizeof(int*) * objFile->faces_num );
+    if ( !objFile->faces ) {
+        perror ( "malloc" );
+        return;
+    }
+
+    for ( i = 0 ; i < objFile->faces_num ; i ++ ) {
+        objFile->faces[i] = (int*)malloc ( sizeof(int) * 3 );
+        if ( !objFile->faces[i] ) {
+            perror ( "malloc" );
+            return;
+        }
+    }
+
+    //Go back to beginning of file
+    rewind ( fp );
+    
+    //Begin reading in data and store into OBJFile struct
+
+    //Read in mtllib type
+    if ( fscanf ( fp , "%s %s" , buffer , objFile->mtllib ) ) {
+        //printf ( "%s\n", objFile->mtllib );
+    }
+
+    //Read in mtl version
+    if ( fscanf ( fp , "%s %s" , buffer , objFile->mtl_ver ) ) {
+        //printf ( "%s\n", objFile->mtl_ver );
+    }
+
+    //Read in vertices
+    for ( i = 0 ; i < objFile->vertices_num ; i ++ ) {
+        fscanf ( fp , "v" );
+        fscanf ( fp , "%f %f %f" , &objFile->vertices[i][0] , &objFile->vertices[i][1] , &objFile->vertices[i][2] );
+        fscanf ( fp , " " );
+        objFile->vertices[i][3] = 1.0f;
+        //printf ( "%f %f %f\n" , objFile->vertices[i][0] , objFile->vertices[i][1] , objFile->vertices[i][2] );
+    }
+
+    //Read in faces
+    for ( i = 0 ; i < objFile->faces_num ; i ++ ) {
+        fscanf ( fp , "f" );
+        fscanf ( fp , "%i %i %i" , &objFile->faces[i][0] , &objFile->faces[i][1] , &objFile->faces[i][2] );
+        fscanf ( fp , " " );
+        //printf ( "%d %d %d\n" , objFile->faces[i][0] , objFile->faces[i][1] , objFile->faces[i][2] );
+    }
 
 }
 
-int
-main( int argc, char **argv )
-{
+void renderObj ( OBJFile * obj , point4 ** points) {
+    //Counters
+    long i , pt;
 
-    /*
+    //Create enough memory to store points of triangles
+    *points = (point4*)malloc ( sizeof(point4) * 3 * obj->faces_num );
+
+    for ( i = 0 , pt = 0 ; i < obj->faces_num ; i ++ ) {
+        (*points)[pt] = obj->vertices[obj->faces[i][0]];
+        (*points)[pt++] = obj->vertices[obj->faces[i][1]];
+        (*points)[pt++] = obj->vertices[obj->faces[i][2]];
+    }
+
+}
+
+int main( int argc , char **argv ) {
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     glutInitWindowSize( 512, 512 );
@@ -249,28 +213,13 @@ main( int argc, char **argv )
 #ifndef __APPLE__
     glewInit ( );
 #endif
-    char c;
-    int temp;
-    while ((c = getopt (argc, argv, "t:")) != -1) {
-        switch ( c ) {
-            case 't':
-            {
-                temp = atoi(optarg);
-                if ( temp > 0 ) {
-                    Theta = temp;
-                }
-            }
-            break;
-        }
-    }
-
-
+    
     init();
     
     glutDisplayFunc( display );
     glutKeyboardFunc( keyboard );
     glutMainLoop();
-    */
-
+    
+    
     return 0;
 }
