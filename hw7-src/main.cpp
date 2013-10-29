@@ -5,21 +5,21 @@
 #include <cstring>
 #include <cerrno>
 
-typedef Angel::vec3  point3;
+typedef Angel::vec4  point4;
 typedef struct OBJFile{
     char mtllib[100];
     char mtl_ver[100];
     long vertices_num;
     long faces_num;
     int ** faces;
-    point3 * vertices;
+    point4 * vertices;
 } OBJFile; 
 
 void readObjFile ( const char * , OBJFile * );
-void renderObj ( OBJFile * , point3 ** );
+void renderObj ( OBJFile * , point4 ** );
 
 OBJFile objFile;
-point3 * points;
+point4 * points;
 
 //OpenGL initialization
 void init ( ) {
@@ -39,7 +39,7 @@ void init ( ) {
     GLuint buffer;
     glGenBuffers( 1, &buffer );
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(point3)*3*objFile.faces_num, points, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(point4)*3*objFile.faces_num, points, GL_STATIC_DRAW );
     
     //Load shaders and use the resulting shader program
     GLuint program = InitShader( "vshader.glsl", "fshader.glsl" );
@@ -47,7 +47,7 @@ void init ( ) {
 
     GLint location = glGetAttribLocation ( program , "vPosition" );
     glEnableVertexAttribArray ( location );
-    glVertexAttribPointer ( location , 3 , GL_FLOAT , GL_FALSE ,
+    glVertexAttribPointer ( location , 4 , GL_FLOAT , GL_FALSE ,
                           0 , BUFFER_OFFSET ( 0 ) );
     
     glEnable ( GL_DEPTH_TEST );
@@ -113,7 +113,7 @@ void readObjFile ( const char * filename , OBJFile * objFile ) {
 
     //Allocate memory for vertices and faces
     //printf ( "Vertices: %ld \n" , objFile->vertices_num );
-    objFile->vertices = (point3*)malloc ( sizeof(point3) * objFile->vertices_num );
+    objFile->vertices = (point4*)malloc ( sizeof(point4) * objFile->vertices_num );
     if ( !objFile->vertices ) {
         perror ( "malloc" );
         return;
@@ -152,6 +152,7 @@ void readObjFile ( const char * filename , OBJFile * objFile ) {
     //Read in vertices
     for ( i = 0 ; i < objFile->vertices_num ; i ++ ) {
         fscanf ( fp , "v %f %f %f \n" , &objFile->vertices[i][0] , &objFile->vertices[i][1] , &objFile->vertices[i][2] );
+        objFile->vertices[i][3] = 1.0f;
         //printf ( "%f %f %f\n" , objFile->vertices[i][0] , objFile->vertices[i][1] , objFile->vertices[i][2] );
         //objFile->vertices[i] = .3 * vec3 ( (GLfloat)objFile->vertices[i][0] , (GLfloat)objFile->vertices[i][1] , (GLfloat)objFile->vertices[i][2] );       
     }
@@ -164,12 +165,12 @@ void readObjFile ( const char * filename , OBJFile * objFile ) {
 
 }
 
-void renderObj ( OBJFile * obj , point3 ** points) {
+void renderObj ( OBJFile * obj , point4 ** points) {
     //Counters
     long i , pt;
 
     //Create enough memory to store points of triangles
-    *points = (point3*)malloc ( sizeof(point3) * 3 * obj->faces_num );
+    *points = (point4*)malloc ( sizeof(point4) * 3 * obj->faces_num );
 
     for ( i = 0 , pt = 0 ; i < obj->faces_num ; i ++ ) {
         (*points)[pt++] = obj->vertices[obj->faces[i][0]-1];
