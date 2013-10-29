@@ -1,6 +1,8 @@
 attribute  vec4 vPosition;
-
+vec4 tmp;
 void main() 
 {
-  gl_Position = vPosition;
+  tmp = .2*vPosition;
+  tmp[3] = 1.0;
+  gl_Position = tmp;
 } 
