@@ -2,8 +2,8 @@
 
 .NULL: .exe
 
-SOURCES = $(wildcard ./hw7-src/*.cpp)
-HEADERS = $(wildcard ./hw7-src/*.h)
+SOURCES = $(wildcard ./hw8-src/*.cpp)
+HEADERS = $(wildcard ./hw8-src/*.h)
 TARGETS = $(basename $(SOURCES))
 
 INIT_SHADER = common/InitShader.o
@@ -36,7 +36,7 @@ DIRT = $(wildcard *.o *.i *~ */*~ *.log)
 .PHONY: Makefile
 
 default all: $(INIT_SHADER)
-	g++  -Wall -pedantic -Iinclude ./hw7-src/main.cpp common/InitShader.o   $(LDLIBS) -o hw7-src/hw7-src
+	g++  -Wall -pedantic -Iinclude ./hw8-src/main.cpp common/InitShader.o   $(LDLIBS) -o hw8-src/hw8-src
 $(TARGETS): $(INIT_SHADER) 
 
 %.o: %.cpp
