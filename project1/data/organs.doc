@@ -1,0 +1,25 @@
+Dear Students:
+
+1) The first five numbers are a floating point header.
+   x-southwest corner 320010
+   y-southwest corner 3560010
+   dx,dy-30 meters
+   x-northeast corner 365010
+   y-northeast corner 3595020
+
+2) The elevations are in meters.
+
+3) There are 1501 columns of 1168 values in elevation.
+
+4) Psuedo code for reading values:
+
+   for x= 1 to 1501
+     for y = 1 to 1168 
+        read(z(x,y))
+     end y
+   end x
+
+5) Elevations are in meters.
+
+
+Best wishes, Hue

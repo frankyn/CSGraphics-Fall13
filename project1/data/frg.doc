@@ -1,0 +1,31 @@
+
+Dear Students,
+  The data in frg.dat are stored by y-scan lines.  
+There are 51 columns of 21 numbers each.  This is
+a digitized set of map data from a small city in 
+Germany.  The data values are real.  The following
+info has been coded on the elevation data:
+
+   xxx.tr   t=1 implies orchards (4 meters high)
+            t=2 implies buildings (up to 10 meters high)
+            t=3 implies trees (up to 20 meters high)
+            r=1 implies a road
+
+In review there are 51X21=1071 values.
+
+
+     1,21 2,21  ....  51,21
+       ...      ....   ...
+     1,2  2,2   ....  51,2
+     1,1  2,1   ....  51,1
+
+Here is pseudocode for reading the data:
+
+     for i= 1 to 51 do
+       for j= 1 to 21 do
+          read z(i,j)
+       endfor
+     endfor
+
+Best wishes, Hue
+

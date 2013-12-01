@@ -1,0 +1,20 @@
+     Mars data file: 
+                    mars.ele
+ 
+
+     LL: 500,500  {ignore ... for my use}
+     UR: 148500,150000 
+   GRAN: 500 meters
+   Please ignore the header line which contains the above info.
+   x,y elevation array: 297 x 300
+   Note: your idiot professor thinks it is stored by x scan lines.
+      for j=1 to ny
+        for i=1 to nx
+           read z[i,j] 
+
+   This is not a file for the faint of heart...test
+   your code on a smaller data file.
+ 
+   297x300x2 ... 178200 triangles to be filled!
+
+   Hue

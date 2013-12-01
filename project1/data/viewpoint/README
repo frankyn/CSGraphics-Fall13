@@ -1,0 +1,145 @@
+Dear Students,
+  The data from Veiwpoint are copyright protected.  We have unlimited
+use of these data in this zipcode.  Products rendered may even be sold,
+but under no circumstances may the data be sold!  They should be used
+for our own purposes and not given away.  Please honor the copyright.
+
+Hue McCoy, 30 November 1993
+
+Hue,
+
+
+  May I make the following suggestions?
+
+  1) gemacs the *.cor files and remove the commas and replace them
+	with spaces.  The way that I did it is:
+		ESC r , <sp>		/* a query-replace */
+
+     This allows the users to use the following:
+	     for (;;)
+		if (scanf("%d", &pt) == EOF) break;
+		scanf("%f", &x);
+		scanf("%f", &y);
+		scanf("%f", &z);
+	     }
+
+				
+					Rick Vaupel
+
+
+Hue,
+
+  Here are the updated statistics, including new file names.
+
+					Rick Vaupel
+
+------------------------------------------------------------------
+
+starship.elm
+side  head  s1  s2  body  wing1
+min=1, max=1991
+
+starship.cor
+minX= -9.064895, maxX= 9.307552
+minY= -4.104129, maxY= 4.104129
+minZ= -1.818754, maxZ= 1.819745
+
+-------------------------------------------------------------------
+
+71dustr.elm
+lfrim  lftire  brims  btires  rfrim  rftire  body  bumpers  rlights
+roof  glass  ldoor  hood  grill  hlights  bottom  newpoly  rdoor
+min=1, max=1228
+
+71dustr.cor
+minX= -7.850500, maxX= 7.850500
+minY= -2.159286, maxY= 2.297501
+minZ= -3.031886, maxZ= 3.031787
+
+------------------------------------------------------------------
+
+man.elm
+footr  handr  lowlegr  uplegr  uparmr  lowarmr  footl  torso  pelvis
+hair  lips  eyes  face  handl  lowlegl  uplegl  uparml  lowarml
+min=1, max=2255
+
+man.cor
+minX= -11.794947, maxX= 11.794947
+minY= -41.663303, maxY= 28.908960
+minZ=  -7.908118, maxZ=  4.351105
+
+--------------------------------------------------------------------
+
+surfbd.elm
+board  scabs
+min=1, max=696
+
+surfbd.cor
+minX= -8.839401, maxX=  9.429799
+minY= -2.920077, maxY= -0.010463
+minZ= -2.162354, maxZ=  2.162355
+
+--------------------------------------------------------------------
+
+57chevy.elm
+cover  visors  hood  black  net  mirror  logo  steer1  steer2  interior
+handles  orn  trim  bottom  hlight  fseat  bseat  rlight  wlight  sidep
+trunk  glass  rftire  rfwhitew  btires  bwhitew  lftire  lfwhitew  doors
+alight  embwhite  embred  embblue  rubber  blacko  grill  body  chrome
+lfrim  brims  rfrim
+min=1, max=16049
+
+57chevy.cor
+minX= -7.435600, maxX= 9.390900
+minY= -2.811098, maxY= 1.900125
+minZ= -3.089916, maxZ= 3.089916
+
+--------------------------------------------------------------------
+
+dilo.elm
+lowarml  uparml  handl  footl  footr  tail1  tail2  tail3  lowarmr
+uparmr  anklel  uplegr  lowlegr  ankler  body  uplegl  lowlegl  handr
+head  neck  jaw
+min=1, max=3852
+
+dilo.cor
+minX= -14.426394, maxX= 6.259773
+minY=  -5.493042, maxY= 6.455083
+minZ=  -3.602605, maxZ= 3.599255
+
+--------------------------------------------------------------------
+
+woman.elm
+armr  arml  body  suit  brow  face  lash  uplip  lowlip  hair  white
+pupil  iris  legr  legl
+min=1, max=2984
+
+woman.cor
+minX=  -3.978867, maxX=  3.978867
+minY= -17.107136, maxY= 10.556360
+minZ=  -3.259467, maxZ=  2.993102
+
+-------------------------------------------------------------------
+
+sandal.elm
+strap02  buckle1  buckle2  sandle  strap01
+min=1, max=2636
+
+sandal.cor
+minX= -5.857017, maxX= 5.857017
+minY= -2.629562, maxY= 2.629562
+minZ= -1.728725, maxZ= 1.728725
+
+-------------------------------------------------------------------
+
+shark.elm
+body  mouth  eyes  tail  ffins  dorsal  fins
+min=1, max=2560
+
+shark.cor
+minX= -75.034958, maxX= 75.034958
+minY= -31.044502, maxY= 31.044502
+minZ= -19.319221, maxZ= 19.319221
+
+-------------------------------------------------------------------
+

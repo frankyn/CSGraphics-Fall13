@@ -1,0 +1,26 @@
+Dear Students,
+
+Unfortunately, the data in wsmr.dat are stored by rows
+not columns.  Sorry about that.  There 121X121 values.
+The SouthWest corner is 1,1 and the NorthEast corner is 
+121,121.
+
+The spacing is 100 meters in both in x and y.
+The area covered is 12000 by 12000 square meters.
+
+The mountains lie in the South and West.  The Missile-range
+is in the SouthEast.  
+
+pseudo-code for reading wsmr.doc
+
+  for j=1 to 121
+    for i=1 to 121
+       read( z(i,j))
+    endi
+  endj
+
+Note if you use wsmrnew.dat it is 301 by 301 and has a header row....
+
+
+Hue
+
